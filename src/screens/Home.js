@@ -31,7 +31,8 @@ const Home = () => {
 
   useEffect(() => {
     // Check data is exist or not in redux persist
-    if (videoList?.videos?.length === 0) {
+    //console.log("==", videoList?.videos);
+    if (!videoList?.videos) {
       // Call api
       dispatch(getVideoApi("GET", baseURL, {}));
     } else {

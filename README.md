@@ -18,10 +18,12 @@ OR
 
 `npx react-native run-android`
 
-##Issue
+## Issue
+
 If you have face this issue in video player
 
 > Could not find com.yqritc:android-scalablevideoview:1.0.4.`
 
-##Solution
+## Solution
+
 https://github.com/react-native-video/react-native-video/issues/2454#issuecomment-913709132
