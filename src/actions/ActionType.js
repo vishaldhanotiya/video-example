@@ -1,0 +1,2 @@
+export const GET_VIDEO_SUCCESS = 'GET_VIDEO_SUCCESS';
+export const GET_VIDEO_FAIL = 'GET_VIDEO_FAIL';
