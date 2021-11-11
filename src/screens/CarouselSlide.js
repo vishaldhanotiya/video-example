@@ -9,71 +9,61 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Video from "react-native-video";
+import { Images } from "../constants/Images";
 const { width: screenWidth } = Dimensions.get("window");
 
 const CarouselSlide = (props) => {
   const { cards } = props;
   const [loadVideo, setLoadVideo] = useState(true);
 
+  const changePlayback = (value, index) => {
+    if (value == null) {
+      props.playPauseOnClick(false, index);
+    } else {
+      props.playPauseOnClick(!value, index);
+    }
+  };
   return (
     <View style={styles.slide}>
       {cards.map((card, index) => {
         return (
-          <TouchableOpacity
-            activeOpacity={1}
-            style={{ flex: 1, margin: 30 }}
-            onPress={() => {
-              if (card.paused == null) {
-                //console.log("paused if", card.paused, card.index);
-                props.videoOnClick(false, card.index);
-              } else {
-                //console.log("paused else", card.paused, card.index);
-                props.videoOnClick(!card.paused, card.index);
-              }
-            }}
-          >
-            <View style={{ flex: 1, backgroundColor: "black" }}>
+          <View style={styles.container} key={index}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={styles.touchableStyle}
+              onPress={() => {
+                changePlayback(card.paused, card.index);
+              }}
+            >
               {card.paused == null ? (
                 <ImageBackground
-                  resizeMode={"cover"}
-                  source={{ uri: card.thumbnail_url }}
                   style={styles.imageCard}
-                  key={index}
+                  source={{ uri: card.thumbnail_url }}
                 >
                   <Image
-                    resizeMode={"center"}
+                    style={styles.thumbnailImage}
                     source={
-                      card.paused == null
-                        ? require("../assets/play_button.png")
-                        : require("../assets/pause.png")
+                      card.paused == null ? Images.play_button : Images.pause
                     }
-                    style={styles.imageCard}
-                    key={index}
                   />
                 </ImageBackground>
               ) : (
-                <View
-                  style={{
-                    flex: 1,
-                  }}
-                >
+                <View style={styles.container}>
                   {loadVideo && (
                     <ActivityIndicator
                       animating
-                      color={"white"}
+                      color={"black"}
                       size="large"
-                      style={{
-                        flex: 1,
-                        position: "absolute",
-                        top: "50%",
-                        left: "45%",
-                      }}
+                      style={styles.activityIndicatorStyle}
                     />
                   )}
 
                   <Video
                     source={{
                       uri: card.video_url,
+                    }}
+                    onEnd={() => {
+                      changePlayback(false, card.index);
                     }}
                     onLoadStart={() => setLoadVideo(true)}
                     onReadyForDisplay={() => setLoadVideo(false)}
@@ -82,42 +72,63 @@ const CarouselSlide = (props) => {
                     resizeMode={"cover"}
                     posterResizeMode="cover"
                   />
-                  <View
-                    style={{
-                      position: "absolute",
-                      left: "45%",
-                      top: "45%",
-                    }}
-                  >
+                  <View style={styles.playView}>
                     <Image
                       source={
                         card.paused
-                          ? require("../assets/play_button.png")
-                          : require("../assets/pause.png")
+                          ? Images.play_button
+                          : !loadVideo && Images.pause
                       }
-                      style={{
-                        width: 40,
-                        height: 40,
-                      }}
+                      style={styles.playIcon}
                     />
                   </View>
                 </View>
               )}
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
         );
       })}
     </View>
   );
 };
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   slide: {
     flexDirection: "column",
     width: screenWidth,
   },
+  thumbnailImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "center",
+  },
   imageCard: {
     width: "100%",
     height: "100%",
+    resizeMode: "cover",
+  },
+  playView: {
+    position: "absolute",
+    left: "45%",
+    top: "45%",
+  },
+  playIcon: {
+    width: 40,
+    height: 40,
+  },
+  touchableStyle: {
+    flex: 1,
+    borderColor: "black",
+    borderWidth: 1,
+    margin: 30,
+  },
+  activityIndicatorStyle: {
+    flex: 1,
+    position: "absolute",
+    top: "50%",
+    left: "45%",
   },
 });
 

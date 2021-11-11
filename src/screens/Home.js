@@ -15,6 +15,7 @@ const { width: screenWidth } = Dimensions.get("window");
 import { useDispatch, useSelector } from "react-redux";
 import { getVideoApi } from "../actions/GetVideoAction";
 import { baseURL } from "../constants/Config";
+
 // create a component
 const Home = () => {
   const stepCarousel = useRef(null);
@@ -25,9 +26,13 @@ const Home = () => {
   const [isPrev, setIsPrev] = useState(false);
 
   const dispatch = useDispatch();
+  // Get Data from reducer
   const videoList = useSelector((state) => state.videoListReducer.videoList);
+
   useEffect(() => {
-    if (videoList?.length === 0) {
+    // Check data is exist or not in redux persist
+    if (videoList?.videos?.length === 0) {
+      // Call api
       dispatch(getVideoApi("GET", baseURL, {}));
     } else {
       if (videoList?.videos?.length > 0) {
@@ -44,7 +49,6 @@ const Home = () => {
   useEffect(() => {
     if (videoList?.videos?.length > 0) {
       setListOfVideo([...videoList.videos]);
-
       const newArrList = videoList?.videos.map((item, index) => {
         item.paused = null;
         item.index = index;
@@ -102,7 +106,6 @@ const Home = () => {
   };
 
   const goToNext = () => {
-    // console.log('===>', JSON.stringify(stepCarousel));
     if (stepCarousel?.current) {
       const scrollPoint = currentSlide * screenWidth;
       stepCarousel.current.scrollTo({ x: scrollPoint, y: 0, animated: true });
@@ -142,7 +145,7 @@ const Home = () => {
       setIsPrev(status);
     }
   };
-  const videoOnClick = (value, index) => {
+  const playPauseOnClick = (value, index) => {
     listOfVideo[index].paused = value;
     setListOfVideo([...listOfVideo]);
   };
@@ -169,7 +172,7 @@ const Home = () => {
           return (
             <CarouselSlide
               key={i}
-              videoOnClick={videoOnClick}
+              playPauseOnClick={playPauseOnClick}
               cards={listOfVideo.slice(startPosition, endPosition)}
             />
           );
@@ -210,13 +213,14 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: Platform.OS == "ios" ? 20 : 0,
     height: "100%",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-evenly",
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 80,
   },
   button: {
     height: 50,
