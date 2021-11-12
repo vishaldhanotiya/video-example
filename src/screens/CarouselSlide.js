@@ -77,7 +77,7 @@ const CarouselSlide = (props) => {
                       source={
                         card.paused
                           ? Images.play_button
-                          : !loadVideo && Images.pause
+                          : loadVideo == false && Images.pause
                       }
                       style={styles.playIcon}
                     />
